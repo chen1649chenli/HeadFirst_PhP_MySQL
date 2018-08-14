@@ -9,39 +9,45 @@
 <body>
 
 <?php
-  $from = 'elmer@makemeelvis.com';
-  $subject = $_POST['subject'];
-  $text = $_POST['elvismail'];
-  $output_form = false;
-  if (empty($subject) || empty($text)){
-    echo("You forget to enter subject or/and text! <br />");
+  if (isset($_POST['submit'])){
+    $subject = $_POST['subject'];
+    $text = $_POST['text'];
+    $from = 'chen1649chenli@gmail.com';
+    $output_form = false;
+
+    if (empty($subject) || empty($text)){
+      echo ('You miss to enter the subject or/and text!');
+      $output_form = true;
+    }
+
+    if (!empty($subject) && !empty($text)){
+      $dbc = mysqli_connect('localhost', 'root', 'chen001649', 'elvis_store')
+        or die('Error connecting to MySQL server.');
+      $query = "SELECT * FROM email_list";
+      $result = mysqli_query($dbc, $query)
+        or die('Error querying database.');
+      while ($row = mysqli_fetch_array($result)){
+        $to = $row['email'];
+        $first_name = $row['first_name'];
+        $last_name = $row['last_name'];
+        $msg = "Dear $first_name $last_name,\n$text";
+        mail($to, $subject, $msg, 'From:' . $from);
+        echo 'Email sent to: ' . $to . '<br />';
+      }
+      mysqli_close($dbc);
+    }
+  }else{
     $output_form = true;
   }
 
-  if (!empty($subject) && !empty($text)){
-    $dbc = mysqli_connect('localhost', 'root', 'chen001649', 'elvis_store')
-      or die('Error connecting to MySQL server.');
-    $query = "SELECT * FROM email_list";
-    $result = mysqli_query($dbc, $query)
-      or die('Error querying database.');
-    while ($row = mysqli_fetch_array($result)){
-      $to = $row['email'];
-      $first_name = $row['first_name'];
-      $last_name = $row['last_name'];
-      $msg = "Dear $first_name $last_name,\n$text";
-      mail($to, $subject, $msg, 'From:' . $from);
-      echo 'Email sent to: ' . $to . '<br />';
-    }
-    mysqli_close($dbc);
-  }
   if ($output_form){
     ?>
-    <form method="post" action="sendemail.php">
+    <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
       <label for="subject">Subject of email:</label><br />
       <input id="subject" name="subject" type="text" size="30" /><br />
       <label for="elvismail">Body of email:</label><br />
       <textarea id="elvismail" name="elvismail" rows="8" cols="40"></textarea><br />
-      <input type="submit" name="Submit" value="Submit" />
+      <input type="submit" id="submit" name="Submit" value="Submit" />
     </form>
 <?php
   }
