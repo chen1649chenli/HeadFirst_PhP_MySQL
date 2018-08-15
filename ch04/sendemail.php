@@ -11,12 +11,12 @@
 <?php
   if (isset($_POST['submit'])){
     $subject = $_POST['subject'];
-    $text = $_POST['text'];
+    $text = $_POST['elvismail'];
     $from = 'chen1649chenli@gmail.com';
     $output_form = false;
 
     if (empty($subject) || empty($text)){
-      echo ('You miss to enter the subject or/and text!');
+      echo 'You miss to enter the subject or/and text! <br />';
       $output_form = true;
     }
 
@@ -41,13 +41,13 @@
   }
 
   if ($output_form){
-    ?>
+?>
     <form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
       <label for="subject">Subject of email:</label><br />
-      <input id="subject" name="subject" type="text" size="30" /><br />
+      <input id="subject" name="subject" type="text" size="30" value="<?php echo $subject; ?>" /><br />
       <label for="elvismail">Body of email:</label><br />
-      <textarea id="elvismail" name="elvismail" rows="8" cols="40"></textarea><br />
-      <input type="submit" id="submit" name="Submit" value="Submit" />
+      <textarea id="elvismail" name="elvismail" rows="8" cols="40"><?php echo $text; ?></textarea><br />
+      <input type="submit" id="submit" name="submit" value="Submit" />
     </form>
 <?php
   }
