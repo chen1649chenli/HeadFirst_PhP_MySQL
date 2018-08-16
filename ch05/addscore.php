@@ -10,29 +10,38 @@
   <h2>Guitar Wars - Add Your High Score</h2>
 
 <?php
+  require_once('appvars.php');
+  require_once('connectvars.php');
+
   if (isset($_POST['submit'])) {
     // Grab the score data from the POST
     $name = $_POST['name'];
     $score = $_POST['score'];
-    if (!empty($name) && !empty($score)) {
-      // Connect to the database
-      $dbc = mysqli_connect('localhost', 'root', 'chen001649', 'guitar_war')
-        or die("Can't connect to the database!");
-      // Write the data to the database
-      $query = "INSERT INTO guitarwars VALUES (0, NOW(), '$name', '$score','$screenshot')";
-      mysqli_query($dbc, $query)
-        or die("Can't insert the records into the table");
-      // Confirm success with the user
-      echo '<p>Thanks for adding your new high score!</p>';
-      echo '<p><strong>Name:</strong> ' . $name . '<br />';
-      echo '<strong>Score:</strong> ' . $score . '</p>';
-      echo '<p><a href="index.php">&lt;&lt; Back to high scores</a></p>';
-      // Clear the score data to clear the form
-      $name = "";
-      $score = "";
-      mysqli_close($dbc);
-    }
-    else {
+    $screenshot = $_FILES['screenshot']['name'];
+    if (!empty($name) && !empty($score) && !empty($screenshot)) {
+      $target = GW_UPLOADPATH.$screenshot;
+      if(move_uploaded_file($_FILES['screenshot']['tmp_name'],$target)){
+        // Connect to the database
+        $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
+          or die("Can't connect to the database!");
+        // Write the data to the database
+        $query = "INSERT INTO guitarwars VALUES (0, NOW(), '$name', '$score','$screenshot')";
+        mysqli_query($dbc, $query)
+          or die("Can't insert the records into the table");
+        // Confirm success with the user
+        echo '<p>Thanks for adding your new high score!</p>';
+        echo '<p><strong>Name:</strong> ' . $name . '<br />';
+        echo '<strong>Score:</strong> ' . $score . '</p>';
+        echo '<p><a href="index.php">&lt;&lt; Back to high scores</a></p>';
+        // Clear the score data to clear the form
+        $name = "";
+        $score = "";
+        $screenshot = "";
+        mysqli_close($dbc);
+      }else{
+        '<p class="error">There is a problem uploading your image.</p>';
+      }
+    }else {
       echo '<p class="error">Please enter all of the information to add your high score.</p>';
     }
   }
@@ -40,7 +49,7 @@
 
   <hr />
   <form enctype="multipart/form-data" method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <input type="hidden" name="MAX_FILE_SIZE" value="32768" />
+    <input type="hidden" name="MAX_FILE_SIZE" value=GW_MAXFILESIZE />
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" value="<?php if (!empty($name)) echo $name; ?>" /><br />
     <label for="score">Score:</label>
