@@ -15,7 +15,7 @@
   require_once('connectvars.php');
 
   // Generate the navigation menu
-  if(!empty($_COOKIE['username'])){
+  if(isset($_COOKIE['username'])){
     echo '&#10084; <a href="viewprofile.php">View Profile</a><br />';
     echo '&#10084; <a href="editprofile.php">Edit Profile</a><br />';
     echo '&#10084; <a href="logout.php">Log Out ('.$_COOKIE['username'].')</a><br />';
