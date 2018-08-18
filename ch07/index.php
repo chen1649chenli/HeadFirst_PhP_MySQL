@@ -15,8 +15,17 @@
   require_once('connectvars.php');
 
   // Generate the navigation menu
-  echo '&#10084; <a href="viewprofile.php">View Profile</a><br />';
-  echo '&#10084; <a href="editprofile.php">Edit Profile</a><br />';
+  if(!empty($_COOKIE['username'])){
+    echo '&#10084; <a href="viewprofile.php">View Profile</a><br />';
+    echo '&#10084; <a href="editprofile.php">Edit Profile</a><br />';
+    echo '&#10084; <a href="logout.php">Log Out ('.$_COOKIE['username'].')</a><br />';
+
+  }
+  else{
+    echo '<a href="login.php">Log In</a><br />';
+    echo '<a href="signup.php">Sign Up</a><br />';
+  }
+
 
   // Connect to the database
   $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
