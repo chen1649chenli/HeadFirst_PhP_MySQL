@@ -28,7 +28,7 @@
           $dbc = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)
             or die("Can't connect to the database!");
           // Write the data to the database
-          $query = "INSERT INTO guitarwars VALUES (0, NOW(), '$name', '$score','$screenshot', 0)";
+          $query = "INSERT INTO guitarwars (date, name, score, screenshot) VALUES (NOW(), '$name', '$score','$screenshot')";
           mysqli_query($dbc, $query)
             or die("Can't insert the records into the table");
           // Confirm success with the user
